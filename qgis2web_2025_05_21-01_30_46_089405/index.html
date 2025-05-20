@@ -33,10 +33,9 @@
         <script src="js/rbush.min.js"></script>
         <script src="js/labelgun.min.js"></script>
         <script src="js/labels.js"></script>
-        <script src="data/stname_SIKKIMcopy_3.js"></script>
-        <script src="data/stname_SIKKIM_4.js"></script>
+        <script src="data/stname_SIKKIM_3.js"></script>
+        <script src="data/stname_SIKKIMcopy_4.js"></script>
         <script src="data/SikkimWhiteMask_5.js"></script>
-        <script src="data/SikkimWhiteMask_6.js"></script>
         <script>
         var highlightLayer;
         function highlightFeature(e) {
@@ -45,7 +44,7 @@
         }
         var map = L.map('map', {
             zoomControl:false, maxZoom:11, minZoom:9
-        }).fitBounds([[27.050103587122354,87.60577164153622],[28.15204402825395,89.52367644316723]]);
+        }).fitBounds([[27.053212022781402,87.50785591827629],[28.155152463912998,89.4257607199073]]);
         var hash = new L.Hash(map);
         map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
         var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
@@ -132,7 +131,7 @@
         });
         layer_GoogleHybrid_2;
         map.addLayer(layer_GoogleHybrid_2);
-        function pop_stname_SIKKIMcopy_3(feature, layer) {
+        function pop_stname_SIKKIM_3(feature, layer) {
             layer.on({
                 mouseout: function(e) {
                     if (typeof layer.closePopup == 'function') {
@@ -151,15 +150,12 @@
                         <td>' + (feature.properties['dtname'] !== null ? autolinker.link(String(feature.properties['dtname']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <th scope="row">Fund Utilized</th>\
-                        <td>' + (feature.properties['virtual_layer_fundDetails__utilized'] !== null ? autolinker.link(String(feature.properties['virtual_layer_fundDetails__utilized']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                        <th scope="row">Fund Utillized</th>\
+                        <td>' + (feature.properties['beneficiaries_int_finance_fundUtilized'] !== null ? autolinker.link(String(feature.properties['beneficiaries_int_finance_fundUtilized']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
                         <th scope="row">Fund Allocated</th>\
-                        <td>' + (feature.properties['virtual_layer_fundDetails__allocated'] !== null ? autolinker.link(String(feature.properties['virtual_layer_fundDetails__allocated']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['virtual_layer_Fund_Utillized'] !== null ? autolinker.link(String(feature.properties['virtual_layer_Fund_Utillized']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                        <td>' + (feature.properties['beneficiaries_int_finance_fundDetails__allocated'] !== null ? autolinker.link(String(feature.properties['beneficiaries_int_finance_fundDetails__allocated']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
                     </tr>\
                 </table>';
             var content = removeEmptyRowsFromPopupContent(popupContent, feature);
@@ -169,11 +165,11 @@
 			layer.bindPopup(content, { maxHeight: 400 });
         }
 
-        function style_stname_SIKKIMcopy_3_0(feature) {
-            switch(String(feature.properties['virtual_layer_fundDetails__utilized'])) {
-                case 'Rs. 1,75,000':
+        function style_stname_SIKKIM_3_0(feature) {
+            switch(String(feature.properties['beneficiaries_int_finance_fundUtilized'])) {
+                case '175000':
                     return {
-                pane: 'pane_stname_SIKKIMcopy_3',
+                pane: 'pane_stname_SIKKIM_3',
                 opacity: 1,
                 color: 'rgba(35,35,35,1.0)',
                 dashArray: '',
@@ -186,9 +182,9 @@
                 interactive: true,
             }
                     break;
-                case 'Rs. 25,000':
+                case '25000':
                     return {
-                pane: 'pane_stname_SIKKIMcopy_3',
+                pane: 'pane_stname_SIKKIM_3',
                 opacity: 1,
                 color: 'rgba(35,35,35,1.0)',
                 dashArray: '',
@@ -201,9 +197,9 @@
                 interactive: true,
             }
                     break;
-                case 'Rs. 65,000':
+                case '65000':
                     return {
-                pane: 'pane_stname_SIKKIMcopy_3',
+                pane: 'pane_stname_SIKKIM_3',
                 opacity: 1,
                 color: 'rgba(35,35,35,1.0)',
                 dashArray: '',
@@ -216,9 +212,9 @@
                 interactive: true,
             }
                     break;
-                case 'Rs. 85,000':
+                case '85000':
                     return {
-                pane: 'pane_stname_SIKKIMcopy_3',
+                pane: 'pane_stname_SIKKIM_3',
                 opacity: 1,
                 color: 'rgba(35,35,35,1.0)',
                 dashArray: '',
@@ -233,7 +229,7 @@
                     break;
                 default:
                     return {
-                pane: 'pane_stname_SIKKIMcopy_3',
+                pane: 'pane_stname_SIKKIM_3',
                 opacity: 1,
                 color: 'rgba(35,35,35,1.0)',
                 dashArray: '',
@@ -248,21 +244,21 @@
                     break;
             }
         }
-        map.createPane('pane_stname_SIKKIMcopy_3');
-        map.getPane('pane_stname_SIKKIMcopy_3').style.zIndex = 403;
-        map.getPane('pane_stname_SIKKIMcopy_3').style['mix-blend-mode'] = 'normal';
-        var layer_stname_SIKKIMcopy_3 = new L.geoJson(json_stname_SIKKIMcopy_3, {
+        map.createPane('pane_stname_SIKKIM_3');
+        map.getPane('pane_stname_SIKKIM_3').style.zIndex = 403;
+        map.getPane('pane_stname_SIKKIM_3').style['mix-blend-mode'] = 'normal';
+        var layer_stname_SIKKIM_3 = new L.geoJson(json_stname_SIKKIM_3, {
             attribution: '',
             interactive: true,
-            dataVar: 'json_stname_SIKKIMcopy_3',
-            layerName: 'layer_stname_SIKKIMcopy_3',
-            pane: 'pane_stname_SIKKIMcopy_3',
-            onEachFeature: pop_stname_SIKKIMcopy_3,
-            style: style_stname_SIKKIMcopy_3_0,
+            dataVar: 'json_stname_SIKKIM_3',
+            layerName: 'layer_stname_SIKKIM_3',
+            pane: 'pane_stname_SIKKIM_3',
+            onEachFeature: pop_stname_SIKKIM_3,
+            style: style_stname_SIKKIM_3_0,
         });
-        bounds_group.addLayer(layer_stname_SIKKIMcopy_3);
-        map.addLayer(layer_stname_SIKKIMcopy_3);
-        function pop_stname_SIKKIM_4(feature, layer) {
+        bounds_group.addLayer(layer_stname_SIKKIM_3);
+        map.addLayer(layer_stname_SIKKIM_3);
+        function pop_stname_SIKKIMcopy_4(feature, layer) {
             layer.on({
                 mouseout: function(e) {
                     if (typeof layer.closePopup == 'function') {
@@ -281,15 +277,12 @@
                         <td>' + (feature.properties['dtname'] !== null ? autolinker.link(String(feature.properties['dtname']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <th scope="row">Fund Utilized</th>\
-                        <td>' + (feature.properties['virtual_layer_fundDetails__utilized'] !== null ? autolinker.link(String(feature.properties['virtual_layer_fundDetails__utilized']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                        <th scope="row">Fund Utillized</th>\
+                        <td>' + (feature.properties['beneficiaries_int_finance_fundUtilized'] !== null ? autolinker.link(String(feature.properties['beneficiaries_int_finance_fundUtilized']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
                         <th scope="row">Fund Allocated</th>\
-                        <td>' + (feature.properties['virtual_layer_fundDetails__allocated'] !== null ? autolinker.link(String(feature.properties['virtual_layer_fundDetails__allocated']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['virtual_layer_Fund_Utillized'] !== null ? autolinker.link(String(feature.properties['virtual_layer_Fund_Utillized']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                        <td>' + (feature.properties['beneficiaries_int_finance_fundDetails__allocated'] !== null ? autolinker.link(String(feature.properties['beneficiaries_int_finance_fundDetails__allocated']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
                     </tr>\
                 </table>';
             var content = removeEmptyRowsFromPopupContent(popupContent, feature);
@@ -299,11 +292,11 @@
 			layer.bindPopup(content, { maxHeight: 400 });
         }
 
-        function style_stname_SIKKIM_4_0(feature) {
-            switch(String(feature.properties['virtual_layer_fundDetails__utilized'])) {
-                case 'Rs. 1,75,000':
+        function style_stname_SIKKIMcopy_4_0(feature) {
+            switch(String(feature.properties['beneficiaries_int_finance_fundUtilized'])) {
+                case '175000':
                     return {
-                pane: 'pane_stname_SIKKIM_4',
+                pane: 'pane_stname_SIKKIMcopy_4',
                 opacity: 1,
                 color: 'rgba(35,35,35,1.0)',
                 dashArray: '',
@@ -314,9 +307,9 @@
                 interactive: true,
             }
                     break;
-                case 'Rs. 25,000':
+                case '25000':
                     return {
-                pane: 'pane_stname_SIKKIM_4',
+                pane: 'pane_stname_SIKKIMcopy_4',
                 opacity: 1,
                 color: 'rgba(35,35,35,1.0)',
                 dashArray: '',
@@ -327,9 +320,9 @@
                 interactive: true,
             }
                     break;
-                case 'Rs. 65,000':
+                case '65000':
                     return {
-                pane: 'pane_stname_SIKKIM_4',
+                pane: 'pane_stname_SIKKIMcopy_4',
                 opacity: 1,
                 color: 'rgba(35,35,35,1.0)',
                 dashArray: '',
@@ -340,9 +333,9 @@
                 interactive: true,
             }
                     break;
-                case 'Rs. 85,000':
+                case '85000':
                     return {
-                pane: 'pane_stname_SIKKIM_4',
+                pane: 'pane_stname_SIKKIMcopy_4',
                 opacity: 1,
                 color: 'rgba(35,35,35,1.0)',
                 dashArray: '',
@@ -355,7 +348,7 @@
                     break;
                 default:
                     return {
-                pane: 'pane_stname_SIKKIM_4',
+                pane: 'pane_stname_SIKKIMcopy_4',
                 opacity: 1,
                 color: 'rgba(35,35,35,1.0)',
                 dashArray: '',
@@ -368,20 +361,20 @@
                     break;
             }
         }
-        map.createPane('pane_stname_SIKKIM_4');
-        map.getPane('pane_stname_SIKKIM_4').style.zIndex = 404;
-        map.getPane('pane_stname_SIKKIM_4').style['mix-blend-mode'] = 'normal';
-        var layer_stname_SIKKIM_4 = new L.geoJson(json_stname_SIKKIM_4, {
+        map.createPane('pane_stname_SIKKIMcopy_4');
+        map.getPane('pane_stname_SIKKIMcopy_4').style.zIndex = 404;
+        map.getPane('pane_stname_SIKKIMcopy_4').style['mix-blend-mode'] = 'normal';
+        var layer_stname_SIKKIMcopy_4 = new L.geoJson(json_stname_SIKKIMcopy_4, {
             attribution: '',
             interactive: true,
-            dataVar: 'json_stname_SIKKIM_4',
-            layerName: 'layer_stname_SIKKIM_4',
-            pane: 'pane_stname_SIKKIM_4',
-            onEachFeature: pop_stname_SIKKIM_4,
-            style: style_stname_SIKKIM_4_0,
+            dataVar: 'json_stname_SIKKIMcopy_4',
+            layerName: 'layer_stname_SIKKIMcopy_4',
+            pane: 'pane_stname_SIKKIMcopy_4',
+            onEachFeature: pop_stname_SIKKIMcopy_4,
+            style: style_stname_SIKKIMcopy_4_0,
         });
-        bounds_group.addLayer(layer_stname_SIKKIM_4);
-        map.addLayer(layer_stname_SIKKIM_4);
+        bounds_group.addLayer(layer_stname_SIKKIMcopy_4);
+        map.addLayer(layer_stname_SIKKIMcopy_4);
         function pop_SikkimWhiteMask_5(feature, layer) {
             layer.on({
                 mouseout: function(e) {
@@ -436,65 +429,10 @@
         });
         bounds_group.addLayer(layer_SikkimWhiteMask_5);
         map.addLayer(layer_SikkimWhiteMask_5);
-        function pop_SikkimWhiteMask_6(feature, layer) {
-            layer.on({
-                mouseout: function(e) {
-                    if (typeof layer.closePopup == 'function') {
-                        layer.closePopup();
-                    } else {
-                        layer.eachLayer(function(feature){
-                            feature.closePopup()
-                        });
-                    }
-                },
-                mouseover: highlightFeature,
-            });
-            var popupContent = '<table>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['name'] !== null ? autolinker.link(String(feature.properties['name']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
-                </table>';
-            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
-			layer.on('popupopen', function(e) {
-				addClassToPopupIfMedia(content, e.popup);
-			});
-			layer.bindPopup(content, { maxHeight: 400 });
-        }
-
-        function style_SikkimWhiteMask_6_0() {
-            return {
-                pane: 'pane_SikkimWhiteMask_6',
-                opacity: 1,
-                color: 'rgba(35,35,35,1.0)',
-                dashArray: '',
-                lineCap: 'butt',
-                lineJoin: 'miter',
-                weight: 1.0, 
-                fill: true,
-                fillOpacity: 1,
-                fillColor: 'rgba(255,255,255,1.0)',
-                interactive: false,
-            }
-        }
-        map.createPane('pane_SikkimWhiteMask_6');
-        map.getPane('pane_SikkimWhiteMask_6').style.zIndex = 406;
-        map.getPane('pane_SikkimWhiteMask_6').style['mix-blend-mode'] = 'normal';
-        var layer_SikkimWhiteMask_6 = new L.geoJson(json_SikkimWhiteMask_6, {
-            attribution: '',
-            interactive: false,
-            dataVar: 'json_SikkimWhiteMask_6',
-            layerName: 'layer_SikkimWhiteMask_6',
-            pane: 'pane_SikkimWhiteMask_6',
-            onEachFeature: pop_SikkimWhiteMask_6,
-            style: style_SikkimWhiteMask_6_0,
-        });
-        bounds_group.addLayer(layer_SikkimWhiteMask_6);
-        map.addLayer(layer_SikkimWhiteMask_6);
         var overlaysTree = [
-            {label: '<img src="legend/SikkimWhiteMask_6.png" /> Sikkim White Mask', layer: layer_SikkimWhiteMask_6},
             {label: '<img src="legend/SikkimWhiteMask_5.png" /> Sikkim White Mask', layer: layer_SikkimWhiteMask_5},
-            {label: 'stname_SIKKIM<br /><table><tr><td style="text-align: center;"><img src="legend/stname_SIKKIM_4_Rs1750000.png" /></td><td>Rs. 1,75,000</td></tr><tr><td style="text-align: center;"><img src="legend/stname_SIKKIM_4_Rs250001.png" /></td><td>Rs. 25,000</td></tr><tr><td style="text-align: center;"><img src="legend/stname_SIKKIM_4_Rs650002.png" /></td><td>Rs. 65,000</td></tr><tr><td style="text-align: center;"><img src="legend/stname_SIKKIM_4_Rs850003.png" /></td><td>Rs. 85,000</td></tr><tr><td style="text-align: center;"><img src="legend/stname_SIKKIM_4_4.png" /></td><td></td></tr></table>', layer: layer_stname_SIKKIM_4},
-            {label: 'stname_SIKKIM copy<br /><table><tr><td style="text-align: center;"><img src="legend/stname_SIKKIMcopy_3_Rs1750000.png" /></td><td>Rs. 1,75,000</td></tr><tr><td style="text-align: center;"><img src="legend/stname_SIKKIMcopy_3_Rs250001.png" /></td><td>Rs. 25,000</td></tr><tr><td style="text-align: center;"><img src="legend/stname_SIKKIMcopy_3_Rs650002.png" /></td><td>Rs. 65,000</td></tr><tr><td style="text-align: center;"><img src="legend/stname_SIKKIMcopy_3_Rs850003.png" /></td><td>Rs. 85,000</td></tr><tr><td style="text-align: center;"><img src="legend/stname_SIKKIMcopy_3_4.png" /></td><td></td></tr></table>', layer: layer_stname_SIKKIMcopy_3},
+            {label: 'stname_SIKKIM copy<br /><table><tr><td style="text-align: center;"><img src="legend/stname_SIKKIMcopy_4_1750000.png" /></td><td>175000</td></tr><tr><td style="text-align: center;"><img src="legend/stname_SIKKIMcopy_4_250001.png" /></td><td>25000</td></tr><tr><td style="text-align: center;"><img src="legend/stname_SIKKIMcopy_4_650002.png" /></td><td>65000</td></tr><tr><td style="text-align: center;"><img src="legend/stname_SIKKIMcopy_4_850003.png" /></td><td>85000</td></tr><tr><td style="text-align: center;"><img src="legend/stname_SIKKIMcopy_4_4.png" /></td><td></td></tr></table>', layer: layer_stname_SIKKIMcopy_4},
+            {label: 'stname_SIKKIM<br /><table><tr><td style="text-align: center;"><img src="legend/stname_SIKKIM_3_1750000.png" /></td><td>175000</td></tr><tr><td style="text-align: center;"><img src="legend/stname_SIKKIM_3_250001.png" /></td><td>25000</td></tr><tr><td style="text-align: center;"><img src="legend/stname_SIKKIM_3_650002.png" /></td><td>65000</td></tr><tr><td style="text-align: center;"><img src="legend/stname_SIKKIM_3_850003.png" /></td><td>85000</td></tr><tr><td style="text-align: center;"><img src="legend/stname_SIKKIM_3_4.png" /></td><td></td></tr></table>', layer: layer_stname_SIKKIM_3},
             {label: "Google Hybrid", layer: layer_GoogleHybrid_2},
             {label: "OSM Standard", layer: layer_OSMStandard_1},
             {label: "Google Labels", layer: layer_GoogleLabels_0},]
