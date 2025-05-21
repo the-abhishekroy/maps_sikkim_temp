@@ -15,3 +15,6 @@
 <br>
 <a href ="https://khushilohia.github.io/maps_sikkim_temp/qgis2web_2025_05_21-20_16_23_611124/index.html">Sikkim heatmap</a>
 
+<br>
+<a href ="https://khushilohia.github.io/maps_sikkim_temp/qgis2web_2025_05_21-21_25_53_950026/index.html">Sikkim gpu point</a>
+
