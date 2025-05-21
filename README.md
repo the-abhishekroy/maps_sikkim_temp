@@ -12,3 +12,6 @@
 <br>
 <a href ="https://khushilohia.github.io/maps_sikkim_temp/qgis2web_2025_05_21-18_50_33_817900/index.html">Sikkim 5</a>
 
+<br>
+<a href ="https://khushilohia.github.io/maps_sikkim_temp/qgis2web_2025_05_21-20_16_23_611124/index.html">Sikkim heatmap</a>
+
