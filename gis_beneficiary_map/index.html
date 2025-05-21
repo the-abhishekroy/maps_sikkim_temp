@@ -199,6 +199,95 @@
         .info h2 {
             display: none; /* Hide original title */
         }
+
+        
+        .beneficiary-popup .leaflet-popup-content-wrapper {
+            border-radius: 6px;
+            padding: 0;
+            width: 280px;
+            max-width: 280px;
+            font-size: 12px;
+            box-shadow: 0 3px 14px rgba(0,0,0,0.2);
+        }
+
+        .beneficiary-popup .popup-header {
+            background-color: #2c7fb8;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px 6px 0 0;
+            margin: 0;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+        }
+
+        .beneficiary-popup .popup-title {
+            margin: 0;
+            font-size: 14px;
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .beneficiary-popup .popup-content {
+            padding: 10px 12px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .beneficiary-popup .data-grid {
+            display: grid;
+            grid-template-columns: 40% 60%;
+            row-gap: 4px;
+            margin-bottom: 8px;
+        }
+
+        .beneficiary-popup .data-label {
+            font-size: 11px;
+            color: #666;
+            font-weight: 500;
+            padding-right: 5px;
+        }
+
+        .beneficiary-popup .data-value {
+            font-size: 11px;
+            color: #333;
+            font-weight: 400;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .beneficiary-popup .popup-progress-container {
+            height: 6px;
+            margin-top: 2px;
+            margin-bottom: 2px;
+        }
+
+        .beneficiary-popup .section-divider {
+            height: 1px;
+            background-color: #eee;
+            margin: 8px 0;
+        }
+
+        .beneficiary-popup .remarks-section {
+            margin-top: 8px;
+        }
+
+        .beneficiary-popup .remarks-label {
+            font-size: 11px;
+            color: #666;
+            font-weight: 500;
+            margin-bottom: 2px;
+        }
+
+        .beneficiary-popup .remarks-value {
+            font-size: 11px;
+            color: #333;
+            font-style: italic;
+            background-color: #f9f9f9;
+            padding: 5px;
+            border-radius: 4px;
+            border-left: 3px solid #ddd;
+        }
         </style>
     </head>
     <body>
@@ -632,6 +721,7 @@
             // Add beneficiary markers if data is available
             var beneficiaryMarkers = L.layerGroup();
             
+            // Replace the existing marker popup code with this improved version
             if (window.beneficiariesData) {
                 window.beneficiariesData.forEach(function(beneficiary) {
                     if (beneficiary.lat && beneficiary.lng) {
@@ -654,42 +744,60 @@
                             icon: icon
                         });
                         
-                        // Create popup content
+                        // Create compact, well-organized popup content
                         var popupContent = `
                             <div class="popup-header">
                                 <h3 class="popup-title">${beneficiary.beneficiaryName}</h3>
                             </div>
                             <div class="popup-content">
-                                <p class="popup-detail-label">District:</p>
-                                <p class="popup-detail-value">${beneficiary.district}</p>
+                                <div class="data-grid">
+                                    <span class="data-label">District:</span>
+                                    <span class="data-value">${beneficiary.district}</span>
+                                    
+                                    <span class="data-label">Block:</span>
+                                    <span class="data-value">${beneficiary.block}</span>
+                                    
+                                    <span class="data-label">Construction:</span>
+                                    <span class="data-value">${beneficiary.stage}</span>
+                                </div>
                                 
-                                <p class="popup-detail-label">Block:</p>
-                                <p class="popup-detail-value">${beneficiary.block}</p>
-                                
-                                <p class="popup-detail-label">Construction Stage:</p>
-                                <p class="popup-detail-value">${beneficiary.stage}</p>
-                                
-                                <p class="popup-detail-label">Progress:</p>
+                                <div class="data-label">Progress:</div>
                                 <div class="popup-progress-container">
                                     <div class="popup-progress-bar" style="width: ${beneficiary.progress}%;"></div>
                                 </div>
-                                <p class="popup-detail-value" style="text-align: right; margin-top: 5px;">${beneficiary.progress}%</p>
+                                <div style="display: flex; justify-content: space-between; font-size: 10px; color: #666;">
+                                    <span>0%</span>
+                                    <span style="font-weight: 500;">${beneficiary.progress}%</span>
+                                    <span>100%</span>
+                                </div>
                                 
-                                <p class="popup-detail-label">Start Date:</p>
-                                <p class="popup-detail-value">${beneficiary.startDate}</p>
+                                <div class="section-divider"></div>
                                 
-                                <p class="popup-detail-label">Expected Completion:</p>
-                                <p class="popup-detail-value">${beneficiary.expectedCompletion}</p>
+                                <div class="data-grid">
+                                    <span class="data-label">Start Date:</span>
+                                    <span class="data-value">${beneficiary.startDate}</span>
+                                    
+                                    <span class="data-label">Completion:</span>
+                                    <span class="data-value">${beneficiary.expectedCompletion}</span>
+                                    
+                                    <span class="data-label">Officer:</span>
+                                    <span class="data-value">${beneficiary.assignedOfficer}</span>
+                                </div>
                                 
-                                <p class="popup-detail-label">Assigned Officer:</p>
-                                <p class="popup-detail-value">${beneficiary.assignedOfficer}</p>
-                                
-                                <p class="popup-detail-label">Remarks:</p>
-                                <p class="popup-detail-value">${beneficiary.remarks}</p>
+                                <div class="remarks-section">
+                                    <div class="remarks-label">Remarks:</div>
+                                    <div class="remarks-value">${beneficiary.remarks || 'No remarks available'}</div>
+                                </div>
                             </div>
                         `;
                         
-                        marker.bindPopup(popupContent, { maxWidth: 300 });
+                        // Create and assign the popup with the custom class for styling
+                        var popup = L.popup({
+                            maxWidth: 280,
+                            className: 'beneficiary-popup'
+                        }).setContent(popupContent);
+                        
+                        marker.bindPopup(popup);
                         
                         // Store beneficiary data in marker for filtering
                         marker.beneficiaryData = beneficiary;
