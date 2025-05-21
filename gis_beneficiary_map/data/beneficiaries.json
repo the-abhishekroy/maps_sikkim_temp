@@ -1590,8 +1590,8 @@
       "stage": "Stage-III",
       "progress": 50,
       "fundUtilized": "Rs. 125,000",
-      "lat": 28.0794,
-      "lng": 88.573,
+      "lat": 27.758076886591375,
+      "lng": 88.53772018304578,
       "images": [
         "/placeholder.svg?height=300&width=400"
       ],
@@ -2483,8 +2483,8 @@
       "stage": "Stage-II",
       "progress": 70,
       "fundUtilized": "Rs. 175,000",
-      "lat": 28.0576,
-      "lng": 88.5985,
+      "lat": 27.74597925278131,
+      "lng": 88.77707651579276,
       "images": [
         "/placeholder.svg?height=300&width=400",
         "/placeholder.svg?height=300&width=400"
