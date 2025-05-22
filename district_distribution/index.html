@@ -1,0 +1,953 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <link rel="stylesheet" href="css/leaflet.css">
+        <link rel="stylesheet" href="css/L.Control.Layers.Tree.css">
+        <link rel="stylesheet" href="css/qgis2web.css">
+        <link rel="stylesheet" href="css/fontawesome-all.min.css">
+        <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+        <style>
+        html, body, #map {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+            font-family: 'Roboto', Arial, sans-serif;
+        }
+        
+        
+        /* Legend */
+        .map-legend {
+            position: absolute;
+            bottom: 30px;
+            right: 10px;
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            max-width: 250px;
+            z-index: 1000;
+        }
+        
+        .legend-title {
+            font-weight: 500;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: #333;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+        
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 3px;
+            margin-right: 8px;
+        }
+        
+        .legend-label {
+            font-size: 12px;
+            color: #555;
+        }
+        
+        /* Popup Styling */
+        .leaflet-popup-content-wrapper {
+            border-radius: 5px;
+            min-width: 200px;
+            padding: 0;
+        }
+        
+        .popup-header {
+            background-color: #2c7fb8;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px 5px 0 0;
+            margin: -1px -1px 0 -1px;
+        }
+        
+        .popup-title {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 500;
+        }
+        
+        .popup-content {
+            padding: 10px 15px;
+        }
+        
+        .popup-detail-label {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 0;
+        }
+        
+        .popup-detail-value {
+            font-size: 14px;
+            color: #333;
+            margin-top: 2px;
+            margin-bottom: 8px;
+        }
+        
+        .popup-progress-container {
+            margin-top: 5px;
+            background-color: #f5f5f5;
+            border-radius: 4px;
+            height: 8px;
+            overflow: hidden;
+        }
+        
+        .popup-progress-bar {
+            height: 100%;
+            background-color: #41b6c4;
+        }
+        
+        /* Status Bar */
+        .status-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 6px 15px;
+            font-size: 12px;
+            color: #666;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .filter-btn {
+            background-color: #41b6c4;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+        
+        .filter-btn:hover {
+            background-color: #2c7fb8;
+        }
+        
+        .toggle-sidebar {
+            position: absolute;
+            top: 80px;
+            left: 320px;
+            z-index: 1000;
+            background-color: white;
+            border: none;
+            border-radius: 0 4px 4px 0;
+            padding: 8px;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            cursor: pointer;
+        }
+        
+        .sidebar-collapsed {
+            transform: translateX(-310px);
+        }
+        
+        .toggle-sidebar-collapsed {
+            left: 10px;
+        }
+        
+        /* Marker styles */
+        .custom-marker {
+            border-radius: 50%;
+            text-align: center;
+            color: white;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid white;
+            box-shadow: 0 0 5px rgba(0,0,0,0.3);
+        }
+        
+        /* Stage colors */
+        .stage-1 { background-color: #fdbb84; }
+        .stage-2 { background-color: #fc8d59; }
+        .stage-3 { background-color: #ef6548; }
+        .stage-4 { background-color: #d7301f; }
+        .stage-5 { background-color: #990000; }
+        
+        /* District colors */
+        .east-district { background-color: rgba(215,46,170,0.7); }
+        .north-district { background-color: rgba(133,200,75,0.7); }
+        .south-district { background-color: rgba(94,86,214,0.7); }
+        .west-district { background-color: rgba(125,219,207,0.7); }
+        
+        /* Reset some leaflet styles */
+        .leaflet-control-layers-expanded {
+            padding: 10px;
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 1px 5px rgba(0,0,0,0.2);
+        }
+        
+        .info h2 {
+            display: none; /* Hide original title */
+        }
+
+        
+        .beneficiary-popup .leaflet-popup-content-wrapper {
+            border-radius: 6px;
+            padding: 0;
+            width: 280px;
+            max-width: 280px;
+            font-size: 12px;
+            box-shadow: 0 3px 14px rgba(0,0,0,0.2);
+        }
+
+        .beneficiary-popup .popup-header {
+            background-color: #2c7fb8;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px 6px 0 0;
+            margin: 0;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+        }
+
+        .beneficiary-popup .popup-title {
+            margin: 0;
+            font-size: 14px;
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .beneficiary-popup .popup-content {
+            padding: 10px 12px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .beneficiary-popup .data-grid {
+            display: grid;
+            grid-template-columns: 40% 60%;
+            row-gap: 4px;
+            margin-bottom: 8px;
+        }
+
+        .beneficiary-popup .data-label {
+            font-size: 11px;
+            color: #666;
+            font-weight: 500;
+            padding-right: 5px;
+        }
+
+        .beneficiary-popup .data-value {
+            font-size: 11px;
+            color: #333;
+            font-weight: 400;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .beneficiary-popup .popup-progress-container {
+            height: 6px;
+            margin-top: 2px;
+            margin-bottom: 2px;
+        }
+
+        .beneficiary-popup .section-divider {
+            height: 1px;
+            background-color: #eee;
+            margin: 8px 0;
+        }
+
+        .beneficiary-popup .remarks-section {
+            margin-top: 8px;
+        }
+
+        .beneficiary-popup .remarks-label {
+            font-size: 11px;
+            color: #666;
+            font-weight: 500;
+            margin-bottom: 2px;
+        }
+
+        .beneficiary-popup .remarks-value {
+            font-size: 11px;
+            color: #333;
+            font-style: italic;
+            background-color: #f9f9f9;
+            padding: 5px;
+            border-radius: 4px;
+            border-left: 3px solid #ddd;
+        }
+        </style>
+    </head>
+    <body>
+        
+    
+        
+        <div class="map-legend">
+            <div class="legend-title">Construction Stages</div>
+            <div class="legend-item">
+                <div class="legend-color stage-1"></div>
+                <div class="legend-label">Stage I - Foundation</div>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color stage-2"></div>
+                <div class="legend-label">Stage II - Walls</div>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color stage-3"></div>
+                <div class="legend-label">Stage III - Roof</div>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color stage-4"></div>
+                <div class="legend-label">Stage IV - Finishing</div>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color stage-5"></div>
+                <div class="legend-label">Stage V - Completed</div>
+            </div>
+            
+            <div class="legend-title" style="margin-top: 15px;">District Colors</div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: rgba(215,46,170,1.0);"></div>
+                <div class="legend-label">East District</div>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: rgba(133,200,75,1.0);"></div>
+                <div class="legend-label">North District</div>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: rgba(94,86,214,1.0);"></div>
+                <div class="legend-label">South District</div>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background-color: rgba(125,219,207,1.0);"></div>
+                <div class="legend-label">West District</div>
+            </div>
+        </div>
+        
+        
+        <div id="map"></div>
+        
+        <script src="js/qgis2web_expressions.js"></script>
+        <script src="js/leaflet.js"></script>
+        <script src="js/L.Control.Layers.Tree.min.js"></script>
+        <script src="js/leaflet.rotatedMarker.js"></script>
+        <script src="js/leaflet.pattern.js"></script>
+        <script src="js/leaflet-hash.js"></script>
+        <script src="js/Autolinker.min.js"></script>
+        <script src="js/rbush.min.js"></script>
+        <script src="js/labelgun.min.js"></script>
+        <script src="js/labels.js"></script>
+        <script src="data/ColoredMap_3.js"></script>
+        <script src="data/stname_SIKKIM_4.js"></script>
+        <script src="data/SikkimWhiteMask_5.js"></script>
+        <script>
+        // Load beneficiaries data
+        fetch('data/beneficiaries.json')
+            .then(response => response.json())
+            .then(data => {
+                // Save beneficiaries data in global variable
+                window.beneficiariesData = data.beneficiaries;
+                
+                // Initialize the map after data is loaded
+                initializeMap();
+            })
+            .catch(error => {
+                console.error('Error loading beneficiaries data:', error);
+                // Initialize the map even if data loading fails
+                initializeMap();
+            });
+        
+        function initializeMap() {
+            var highlightLayer;
+            function highlightFeature(e) {
+                highlightLayer = e.target;
+                highlightLayer.openPopup();
+            }
+            
+            var map = L.map('map', {
+                zoomControl: false, 
+                maxZoom: 11, 
+                minZoom: 9
+            }).fitBounds([[27.053212022781402,87.50785591827629],[28.155152463912998,89.4257607199073]]);
+            
+            var hash = new L.Hash(map);
+            map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
+            
+            var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
+            
+            // remove popup's row if "visible-with-data"
+            function removeEmptyRowsFromPopupContent(content, feature) {
+                var tempDiv = document.createElement('div');
+                tempDiv.innerHTML = content;
+                var rows = tempDiv.querySelectorAll('tr');
+                for (var i = 0; i < rows.length; i++) {
+                    var td = rows[i].querySelector('td.visible-with-data');
+                    var key = td ? td.id : '';
+                    if (td && td.classList.contains('visible-with-data') && feature.properties[key] == null) {
+                        rows[i].parentNode.removeChild(rows[i]);
+                    }
+                }
+                return tempDiv.innerHTML;
+            }
+            
+            // add class to format popup if it contains media
+            function addClassToPopupIfMedia(content, popup) {
+                var tempDiv = document.createElement('div');
+                tempDiv.innerHTML = content;
+                if (tempDiv.querySelector('td img')) {
+                    popup._contentNode.classList.add('media');
+                    // Delay to force the redraw
+                    setTimeout(function() {
+                        popup.update();
+                    }, 10);
+                } else {
+                    popup._contentNode.classList.remove('media');
+                }
+            }
+            
+            var zoomControl = L.control.zoom({
+                position: 'topleft'
+            }).addTo(map);
+            
+            var bounds_group = new L.featureGroup([]);
+            function setBounds() {
+            }
+            
+            // Base maps
+            map.createPane('pane_GoogleLabels_0');
+            map.getPane('pane_GoogleLabels_0').style.zIndex = 400;
+            var layer_GoogleLabels_0 = L.tileLayer('https://mt1.google.com/vt/lyrs=h&x={x}&y={y}&z={z}', {
+                pane: 'pane_GoogleLabels_0',
+                opacity: 1.0,
+                attribution: '<a href="https://www.google.at/permissions/geoguidelines/attr-guide.html">Map data ©2015 Google</a>',
+                minZoom: 9,
+                maxZoom: 11,
+                minNativeZoom: 0,
+                maxNativeZoom: 20
+            });
+            
+            map.createPane('pane_OSMStandard_1');
+            map.getPane('pane_OSMStandard_1').style.zIndex = 401;
+            var layer_OSMStandard_1 = L.tileLayer('http://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                pane: 'pane_OSMStandard_1',
+                opacity: 1.0,
+                attribution: '<a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors, CC-BY-SA</a>',
+                minZoom: 9,
+                maxZoom: 11,
+                minNativeZoom: 0,
+                maxNativeZoom: 19
+            });
+            
+            map.createPane('pane_GoogleHybrid_2');
+            map.getPane('pane_GoogleHybrid_2').style.zIndex = 402;
+            var layer_GoogleHybrid_2 = L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
+                pane: 'pane_GoogleHybrid_2',
+                opacity: 1.0,
+                attribution: '<a href="https://www.google.at/permissions/geoguidelines/attr-guide.html">Map data ©2015 Google</a>',
+                minZoom: 9,
+                maxZoom: 11,
+                minNativeZoom: 0,
+                maxNativeZoom: 20
+            });
+            
+            // By default show only Google Hybrid and hide others
+            map.addLayer(layer_GoogleHybrid_2);
+            
+            // ColoredMap layer
+            function pop_ColoredMap_3(feature, layer) {
+                layer.on({
+                    mouseout: function(e) {
+                        if (typeof layer.closePopup == 'function') {
+                            layer.closePopup();
+                        } else {
+                            layer.eachLayer(function(feature){
+                                feature.closePopup()
+                            });
+                        }
+                    },
+                    mouseover: highlightFeature,
+                });
+                
+                // Create an enhanced popup for district information
+                var districtName = feature.properties['dtname'];
+                var beneficiaryCount = 0;
+                var completedCount = 0;
+                var inProgressCount = 0;
+                
+                // If beneficiaries data is available, calculate district statistics
+                if (window.beneficiariesData) {
+                    beneficiaryCount = window.beneficiariesData.filter(b => b.district === districtName).length;
+                    completedCount = window.beneficiariesData.filter(b => b.district === districtName && b.progress === 100).length;
+                    inProgressCount = beneficiaryCount - completedCount;
+                }
+                
+                var popupContent = `
+                    <div class="popup-header">
+                        <h3 class="popup-title">${districtName}</h3>
+                    </div>
+                    <div class="popup-content">
+                        <p class="popup-detail-label">Total Beneficiaries:</p>
+                        <p class="popup-detail-value">${beneficiaryCount}</p>
+                        
+                        <p class="popup-detail-label">Completed Projects:</p>
+                        <p class="popup-detail-value">${completedCount}</p>
+                        
+                        <p class="popup-detail-label">In-Progress Projects:</p>
+                        <p class="popup-detail-value">${inProgressCount}</p>
+                        
+                        <p class="popup-detail-label">Completion Rate:</p>
+                        <div class="popup-progress-container">
+                            <div class="popup-progress-bar" style="width: ${beneficiaryCount > 0 ? (completedCount / beneficiaryCount * 100) : 0}%;"></div>
+                        </div>
+                        <p class="popup-detail-value" style="text-align: right; margin-top: 5px;">${beneficiaryCount > 0 ? Math.round(completedCount / beneficiaryCount * 100) : 0}%</p>
+                    </div>
+                `;
+                
+                layer.bindPopup(popupContent, { maxWidth: 300 });
+            }
+            
+            function style_ColoredMap_3_0(feature) {
+                switch(String(feature.properties['dtname'])) {
+                    case 'East District':
+                        return {
+                            pane: 'pane_ColoredMap_3',
+                            opacity: 1,
+                            color: 'rgba(35,35,35,1.0)',
+                            dashArray: '',
+                            lineCap: 'butt',
+                            lineJoin: 'miter',
+                            weight: 2.0, 
+                            fill: true,
+                            fillOpacity: 0.7,
+                            fillColor: 'rgba(215,46,170,1.0)',
+                            interactive: true,
+                        }
+                        break;
+                    case 'North District':
+                        return {
+                            pane: 'pane_ColoredMap_3',
+                            opacity: 1,
+                            color: 'rgba(35,35,35,1.0)',
+                            dashArray: '',
+                            lineCap: 'butt',
+                            lineJoin: 'miter',
+                            weight: 2.0, 
+                            fill: true,
+                            fillOpacity: 0.7,
+                            fillColor: 'rgba(133,200,75,1.0)',
+                            interactive: true,
+                        }
+                        break;
+                    case 'South District':
+                        return {
+                            pane: 'pane_ColoredMap_3',
+                            opacity: 1,
+                            color: 'rgba(35,35,35,1.0)',
+                            dashArray: '',
+                            lineCap: 'butt',
+                            lineJoin: 'miter',
+                            weight: 2.0, 
+                            fill: true,
+                            fillOpacity: 0.7,
+                            fillColor: 'rgba(94,86,214,1.0)',
+                            interactive: true,
+                        }
+                        break;
+                    case 'West District':
+                        return {
+                            pane: 'pane_ColoredMap_3',
+                            opacity: 1,
+                            color: 'rgba(35,35,35,1.0)',
+                            dashArray: '',
+                            lineCap: 'butt',
+                            lineJoin: 'miter',
+                            weight: 2.0, 
+                            fill: true,
+                            fillOpacity: 0.7,
+                            fillColor: 'rgba(125,219,207,1.0)',
+                            interactive: true,
+                        }
+                        break;
+                }
+            }
+            
+            map.createPane('pane_ColoredMap_3');
+            map.getPane('pane_ColoredMap_3').style.zIndex = 403;
+            map.getPane('pane_ColoredMap_3').style['mix-blend-mode'] = 'normal';
+            var layer_ColoredMap_3 = new L.geoJson(json_ColoredMap_3, {
+                attribution: '',
+                interactive: true,
+                dataVar: 'json_ColoredMap_3',
+                layerName: 'layer_ColoredMap_3',
+                pane: 'pane_ColoredMap_3',
+                onEachFeature: pop_ColoredMap_3,
+                style: style_ColoredMap_3_0,
+            });
+            bounds_group.addLayer(layer_ColoredMap_3);
+            map.addLayer(layer_ColoredMap_3);
+            
+            // District boundaries layer
+            function pop_stname_SIKKIM_4(feature, layer) {
+                layer.on({
+                    mouseout: function(e) {
+                        if (typeof layer.closePopup == 'function') {
+                            layer.closePopup();
+                        } else {
+                            layer.eachLayer(function(feature){
+                                feature.closePopup()
+                            });
+                        }
+                    },
+                    mouseover: highlightFeature,
+                });
+                
+                var popupContent = '<table>\
+                        <tr>\
+                            <th scope="row">DISTRICT</th>\
+                            <td>' + (feature.properties['dtname'] !== null ? autolinker.link(String(feature.properties['dtname']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                        </tr>\
+                        <tr>\
+                            <th scope="row">No of Beneficiaries</th>\
+                            <td>' + (feature.properties['virtual_layer_total_beneficiaries'] !== null ? autolinker.link(String(feature.properties['virtual_layer_total_beneficiaries']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                        </tr>\
+                    </table>';
+                var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+                layer.on('popupopen', function(e) {
+                    addClassToPopupIfMedia(content, e.popup);
+                });
+                layer.bindPopup(content, { maxHeight: 400 });
+            }
+            
+            function style_stname_SIKKIM_4_0() {
+                return {
+                    pane: 'pane_stname_SIKKIM_4',
+                    opacity: 1,
+                    color: 'rgba(35,35,35,1.0)',
+                    dashArray: '',
+                    lineCap: 'butt',
+                    lineJoin: 'miter',
+                    weight: 2.0, 
+                    fillOpacity: 0,
+                    interactive: true,
+                }
+            }
+            
+            map.createPane('pane_stname_SIKKIM_4');
+            map.getPane('pane_stname_SIKKIM_4').style.zIndex = 404;
+            map.getPane('pane_stname_SIKKIM_4').style['mix-blend-mode'] = 'normal';
+            var layer_stname_SIKKIM_4 = new L.geoJson(json_stname_SIKKIM_4, {
+                attribution: '',
+                interactive: true,
+                dataVar: 'json_stname_SIKKIM_4',
+                layerName: 'layer_stname_SIKKIM_4',
+                pane: 'pane_stname_SIKKIM_4',
+                onEachFeature: pop_stname_SIKKIM_4,
+                style: style_stname_SIKKIM_4_0,
+            });
+            bounds_group.addLayer(layer_stname_SIKKIM_4);
+            map.addLayer(layer_stname_SIKKIM_4);
+            
+            // Sikkim White Mask layer (hidden by default)
+            function pop_SikkimWhiteMask_5(feature, layer) {
+                layer.on({
+                    mouseout: function(e) {
+                        if (typeof layer.closePopup == 'function') {
+                            layer.closePopup();
+                        } else {
+                            layer.eachLayer(function(feature){
+                                feature.closePopup()
+                            });
+                        }
+                    },
+                    mouseover: highlightFeature,
+                });
+                var popupContent = '<table>\
+                        <tr>\
+                            <td colspan="2">' + (feature.properties['name'] !== null ? autolinker.link(String(feature.properties['name']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                        </tr>\
+                    </table>';
+                var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+                layer.on('popupopen', function(e) {
+                    addClassToPopupIfMedia(content, e.popup);
+                });
+                layer.bindPopup(content, { maxHeight: 400 });
+            }
+            
+            function style_SikkimWhiteMask_5_0() {
+                return {
+                    pane: 'pane_SikkimWhiteMask_5',
+                    opacity: 1,
+                    color: 'rgba(35,35,35,1.0)',
+                    dashArray: '',
+                    lineCap: 'butt',
+                    lineJoin: 'miter',
+                    weight: 1.0, 
+                    fill: true,
+                    fillOpacity: 1,
+                    fillColor: 'rgba(255,255,255,1.0)',
+                    interactive: false,
+                }
+            }
+            
+            map.createPane('pane_SikkimWhiteMask_5');
+            map.getPane('pane_SikkimWhiteMask_5').style.zIndex = 405;
+            map.getPane('pane_SikkimWhiteMask_5').style['mix-blend-mode'] = 'normal';
+            var layer_SikkimWhiteMask_5 = new L.geoJson(json_SikkimWhiteMask_5, {
+                attribution: '',
+                interactive: false,
+                dataVar: 'json_SikkimWhiteMask_5',
+                layerName: 'layer_SikkimWhiteMask_5',
+                pane: 'pane_SikkimWhiteMask_5',
+                onEachFeature: pop_SikkimWhiteMask_5,
+                style: style_SikkimWhiteMask_5_0,
+            });
+            bounds_group.addLayer(layer_SikkimWhiteMask_5);
+            
+            // Don't add the white mask by default
+            // map.addLayer(layer_SikkimWhiteMask_5);
+            
+            // Add beneficiary markers if data is available
+            var beneficiaryMarkers = L.layerGroup();
+            
+            // Replace the existing marker popup code with this improved version
+            if (window.beneficiariesData) {
+                window.beneficiariesData.forEach(function(beneficiary) {
+                    if (beneficiary.lat && beneficiary.lng) {
+                        // Determine marker color based on stage
+                        var stageClass = 'stage-1';
+                        if (beneficiary.stage === 'Stage-II') stageClass = 'stage-2';
+                        if (beneficiary.stage === 'Stage-III') stageClass = 'stage-3';
+                        if (beneficiary.stage === 'Stage-IV') stageClass = 'stage-4';
+                        if (beneficiary.stage === 'Stage-V') stageClass = 'stage-5';
+                        
+                        // Create custom div icon for marker
+                        var icon = L.divIcon({
+                            className: 'custom-marker ' + stageClass,
+                            html: '<div style="width:100%;height:100%;">' + beneficiary.id + '</div>',
+                            iconSize: [20, 20]
+                        });
+                        
+                        // Create marker
+                        var marker = L.marker([beneficiary.lat, beneficiary.lng], {
+                            icon: icon
+                        });
+                        
+                        // Create compact, well-organized popup content
+                        var popupContent = `
+                            <div class="popup-header">
+                                <h3 class="popup-title">${beneficiary.beneficiaryName}</h3>
+                            </div>
+                            <div class="popup-content">
+                                <div class="data-grid">
+                                    <span class="data-label">District:</span>
+                                    <span class="data-value">${beneficiary.district}</span>
+                                    
+                                    <span class="data-label">Block:</span>
+                                    <span class="data-value">${beneficiary.block}</span>
+                                    
+                                    <span class="data-label">Construction:</span>
+                                    <span class="data-value">${beneficiary.stage}</span>
+                                </div>
+                                
+                                <div class="data-label">Progress:</div>
+                                <div class="popup-progress-container">
+                                    <div class="popup-progress-bar" style="width: ${beneficiary.progress}%;"></div>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; font-size: 10px; color: #666;">
+                                    <span>0%</span>
+                                    <span style="font-weight: 500;">${beneficiary.progress}%</span>
+                                    <span>100%</span>
+                                </div>
+                                
+                                <div class="section-divider"></div>
+                                
+                                <div class="data-grid">
+                                    <span class="data-label">Start Date:</span>
+                                    <span class="data-value">${beneficiary.startDate}</span>
+                                    
+                                    <span class="data-label">Completion:</span>
+                                    <span class="data-value">${beneficiary.expectedCompletion}</span>
+                                    
+                                    <span class="data-label">Officer:</span>
+                                    <span class="data-value">${beneficiary.assignedOfficer}</span>
+                                </div>
+                                
+                                <div class="remarks-section">
+                                    <div class="remarks-label">Remarks:</div>
+                                    <div class="remarks-value">${beneficiary.remarks || 'No remarks available'}</div>
+                                </div>
+                            </div>
+                        `;
+                        
+                        // Create and assign the popup with the custom class for styling
+                        var popup = L.popup({
+                            maxWidth: 280,
+                            className: 'beneficiary-popup'
+                        }).setContent(popupContent);
+                        
+                        marker.bindPopup(popup);
+                        
+                        // Store beneficiary data in marker for filtering
+                        marker.beneficiaryData = beneficiary;
+                        
+                        // Add marker to layer group
+                        beneficiaryMarkers.addLayer(marker);
+                    }
+                });
+                
+                // Add markers to map
+                map.addLayer(beneficiaryMarkers);
+            }
+            
+            // Grouped and renamed layers for the tree control
+            var baseTree = [
+                {
+                    label: "Basemaps",
+                    children: [
+                        { label: "Google Hybrid", layer: layer_GoogleHybrid_2 },
+                        { label: "OSM Standard", layer: layer_OSMStandard_1 },
+                        { label: "Google Labels", layer: layer_GoogleLabels_0 }
+                    ]
+                }
+            ];
+            
+            var overlaysTree = [
+                {
+                    label: "Administrative Boundaries",
+                    children: [
+                        {
+                            label: 'District Boundaries',
+                            layer: layer_stname_SIKKIM_4
+                        },
+                        {
+                            label: 'Colored Districts',
+                            layer: layer_ColoredMap_3
+                        }
+                    ]
+                },
+                {
+                    label: "Beneficiary Data",
+                    children: [
+                        {
+                            label: 'Beneficiary Markers',
+                            layer: beneficiaryMarkers
+                        }
+                    ]
+                },
+                {
+                    label: "Other Layers",
+                    children: [
+                        {
+                            label: 'Sikkim White Mask',
+                            layer: layer_SikkimWhiteMask_5
+                        }
+                    ]
+                }
+            ];
+            
+            // Use the grouped trees in the control
+            var lay = L.control.layers.tree(baseTree, overlaysTree, {
+                collapsed: true
+            });
+            lay.addTo(map);
+            
+            setBounds();
+            resetLabels([layer_ColoredMap_3]);
+            map.on("zoomend", function(){
+                resetLabels([layer_ColoredMap_3]);
+            });
+            map.on("layeradd", function(){
+                resetLabels([layer_ColoredMap_3]);
+            });
+            map.on("layerremove", function(){
+                resetLabels([layer_ColoredMap_3]);
+            });
+            
+            // Setup sidebar toggle functionality
+            document.getElementById('toggle-sidebar').addEventListener('click', function() {
+                document.getElementById('sidebar').classList.toggle('sidebar-collapsed');
+                this.classList.toggle('toggle-sidebar-collapsed');
+            });
+            
+            document.getElementById('sidebar-close').addEventListener('click', function() {
+                document.getElementById('sidebar').classList.add('sidebar-collapsed');
+                document.getElementById('toggle-sidebar').classList.add('toggle-sidebar-collapsed');
+            });
+            
+            // Setup filter functionality
+            var progressSlider = document.getElementById('progress-filter');
+            var progressValue = document.getElementById('progress-value');
+            
+            progressSlider.addEventListener('input', function() {
+                progressValue.textContent = this.value + '%';
+            });
+            
+            document.getElementById('apply-filters').addEventListener('click', function() {
+                var districtFilter = document.getElementById('district-filter').value;
+                var stageFilter = document.getElementById('stage-filter').value;
+                var progressFilter = parseInt(document.getElementById('progress-filter').value);
+                var nameFilter = document.getElementById('name-filter').value.toLowerCase();
+                
+                beneficiaryMarkers.eachLayer(function(layer) {
+                    var beneficiary = layer.beneficiaryData;
+                    var visible = true;
+                    
+                    // District filter
+                    if (districtFilter !== 'all' && beneficiary.district !== districtFilter) {
+                        visible = false;
+                    }
+                    
+                    // Stage filter
+                    if (stageFilter !== 'all' && beneficiary.stage !== stageFilter) {
+                        visible = false;
+                    }
+                    
+                    // Progress filter
+                    if (beneficiary.progress < progressFilter) {
+                        visible = false;
+                    }
+                    
+                    // Name filter
+                    if (nameFilter && !beneficiary.beneficiaryName.toLowerCase().includes(nameFilter)) {
+                        visible = false;
+                    }
+                    
+                    // Show/hide marker
+                    if (visible) {
+                        layer.setOpacity(1);
+                        layer.getElement().style.display = '';
+                    } else {
+                        layer.setOpacity(0);
+                        layer.getElement().style.display = 'none';
+                    }
+                });
+            });
+            
+            document.getElementById('reset-filters').addEventListener('click', function() {
+                document.getElementById('district-filter').value = 'all';
+                document.getElementById('stage-filter').value = 'all';
+                document.getElementById('progress-filter').value = 0;
+                document.getElementById('progress-value').textContent = '0%';
+                document.getElementById('name-filter').value = '';
+                
+                beneficiaryMarkers.eachLayer(function(layer) {
+                    layer.setOpacity(1);
+                    layer.getElement().style.display = '';
+                });
+            });
+        }
+        </script>
+    </body>
+</html>
